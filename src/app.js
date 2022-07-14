@@ -33,29 +33,83 @@ function onPointerMove(event) {
       lastRaycasterObject = intersects.object;
     }
 
-    setTimeout(() => {
-      $("#tooltip").text(intersects.object.name);
-      intersects.object.material.color.setRGB(1, 0, 0);
+    if (INTERSECTED != intersects.object) {
+      if (INTERSECTED) {
+        INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+      } else {
+        INTERSECTED = intersects.object;
+        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+        INTERSECTED.material.emissive.setHex(0xff0000);
+      }
 
-      // intersects.object.material.color="green"
-      // intersects.object.material.needsupdate=true
-      $("#tooltip").css("display", "block");
-      //  $("#tooltip").animate({opacity: 1 },200)
+      var pos2D = Get2DPos(
+        INTERSECTED,
+        window.innerWidth,
+        window.innerHeight,
+        camera
+      );
+      console.log("callled", INTERSECTED);
+      console.log(pos2D);
+
+      $("#tooltip").text(INTERSECTED.name);
+      $("#tooltip").css({
+        display: "block",
+        opacity: 0.0,
+      });
+      $("#tooltip").css({ top: pos2D.y + "px", left: pos2D.x + "px" });
       $("#tooltip").css({ opacity: "1" });
-    }, 10);
-
-    // $("#tooltip").css({top : pos2D.y+'px',left : pos2D.x+'px'})
-    // $("#tooltip").css({opacity : '1'})
-    // $('html,body').css('cursor','pointer');
+      $("html,body").css("cursor", "pointer");
+    }
   } else {
-    // console.log(lastRaycasterObject);
+    if (INTERSECTED) {
+      INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+    }
+
     if (lastRaycasterObject) {
       lastRaycasterObject.material.color.setRGB(0.8, 0.8, 0.8);
     }
 
-    $("#tooltip").text("");
-    $("#tooltip").css("display", "none");
+    $("#tooltip").css({
+      display: "none",
+    });
+    $("html,body").css("cursor", "default");
+
+    INTERSECTED = null;
   }
+
+  // var pos2D = Get2DPos(
+  //   INTERSECTED,
+  //   window.innerWidth,
+  //   window.innerHeight,
+  //   camera
+  // );
+  // console.log("callled", INTERSECTED);
+  // console.log(pos2D);
+
+  // setTimeout(() => {
+  //   $("#tooltip").text(intersects.object.name);
+  //   intersects.object.material.color.setRGB(1, 0, 0);
+  //   $("#tooltip").css({
+  //     display: "block",
+  //     opacity: 0.0,
+  //   });
+  //   $("#tooltip").css({ top: pos2D.y + "px", left: pos2D.x + "px" });
+  //   $("#tooltip").css({ opacity: "1" });
+  //   $("html,body").css("cursor", "pointer");
+  // }, 10);
+
+  // $("#tooltip").css({top : pos2D.y+'px',left : pos2D.x+'px'})
+  // $("#tooltip").css({opacity : '1'})
+  // $('html,body').css('cursor','pointer');
+  // } else {
+  //   // console.log(lastRaycasterObject);
+  // if (lastRaycasterObject) {
+  //   lastRaycasterObject.material.color.setRGB(0.8, 0.8, 0.8);
+  // }
+
+  //   $("#tooltip").text("");
+  //   $("#tooltip").css("display", "none");
+  // }
 }
 
 function init() {
@@ -238,4 +292,17 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+//two dimensional position
+function Get2DPos(obj, cWidth, cHeight, camera) {
+  var vector = new THREE.Vector3();
+  var widthHalf = 0.5 * cWidth;
+  var heightHalf = 0.5 * cHeight;
+
+  obj.updateMatrixWorld();
+  vector.setFromMatrixPosition(obj.matrixWorld);
+  vector.project(camera);
+  vector.x = vector.x * widthHalf + widthHalf - 100;
+  vector.y = -(vector.y * heightHalf) + heightHalf - 100;
+  return { x: vector.x, y: vector.y };
+}
 init();
