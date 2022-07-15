@@ -77,39 +77,7 @@ function onPointerMove(event) {
     INTERSECTED = null;
   }
 
-  // var pos2D = Get2DPos(
-  //   INTERSECTED,
-  //   window.innerWidth,
-  //   window.innerHeight,
-  //   camera
-  // );
-  // console.log("callled", INTERSECTED);
-  // console.log(pos2D);
-
-  // setTimeout(() => {
-  //   $("#tooltip").text(intersects.object.name);
-  //   intersects.object.material.color.setRGB(1, 0, 0);
-  //   $("#tooltip").css({
-  //     display: "block",
-  //     opacity: 0.0,
-  //   });
-  //   $("#tooltip").css({ top: pos2D.y + "px", left: pos2D.x + "px" });
-  //   $("#tooltip").css({ opacity: "1" });
-  //   $("html,body").css("cursor", "pointer");
-  // }, 10);
-
-  // $("#tooltip").css({top : pos2D.y+'px',left : pos2D.x+'px'})
-  // $("#tooltip").css({opacity : '1'})
-  // $('html,body').css('cursor','pointer');
-  // } else {
-  //   // console.log(lastRaycasterObject);
-  // if (lastRaycasterObject) {
-  //   lastRaycasterObject.material.color.setRGB(0.8, 0.8, 0.8);
-  // }
-
-  //   $("#tooltip").text("");
-  //   $("#tooltip").css("display", "none");
-  // }
+  
 }
 
 function init() {
@@ -121,6 +89,7 @@ function init() {
     1000
   );
   camera.position.set(0, 0, 1);
+
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -151,7 +120,13 @@ function init() {
   loadSkyBox();
   loadModels();
   animate();
+
+
+
+
 }
+
+
 
 function loadVedios() {
   const texture = new THREE.VideoTexture(video);
@@ -257,10 +232,12 @@ function loadModels() {
       // object.scale.set(0.1,0.1,0.)
       object1.scale.set(7, 10, 5);
       object1.position.set(-7, -10, -40);
-      object1.name = "door2";
+      // object1.name = "door2";
       // scene.add(object1)
       meshArr.push(object1);
       totalGroup.add(object1);
+
+      
     }
   );
 
@@ -280,10 +257,11 @@ function loadModels() {
     object3.scale.set(7, 10, 7);
     object3.position.set(7, -9, -39);
     object3.rotation.set(0, -0.08, 0);
-    object3.name = "door";
+    // object3.name = "door";
     // scene.add(object3)
     meshArr.push(object3);
     totalGroup.add(object3);
+
   });
 }
 function animate() {
@@ -295,8 +273,9 @@ function animate() {
 //two dimensional position
 function Get2DPos(obj, cWidth, cHeight, camera) {
   var vector = new THREE.Vector3();
-  var widthHalf = 0.5 * cWidth;
-  var heightHalf = 0.5 * cHeight;
+  var widthHalf = 0.4* cWidth;
+  var heightHalf = 0.4 * cHeight;
+
 
   obj.updateMatrixWorld();
   vector.setFromMatrixPosition(obj.matrixWorld);
@@ -304,5 +283,6 @@ function Get2DPos(obj, cWidth, cHeight, camera) {
   vector.x = vector.x * widthHalf + widthHalf - 100;
   vector.y = -(vector.y * heightHalf) + heightHalf - 100;
   return { x: vector.x, y: vector.y };
+
 }
 init();
