@@ -5,9 +5,7 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-// let autoRotate = true;
-// const totalGroup = new THREE.Group();
-// const raycaster = new THREE.Raycaster();
+
 
 let scene, camera, renderer, INTERSECTED;
 
@@ -120,9 +118,6 @@ function init() {
   loadSkyBox();
   loadModels();
   animate();
-
-
-
 
 }
 
