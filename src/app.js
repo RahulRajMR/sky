@@ -5,9 +5,11 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
+// let autoRotate = true;
+// const totalGroup = new THREE.Group();
+// const raycaster = new THREE.Raycaster();
 
-
-let scene, camera, renderer, INTERSECTED;
+let scene, camera, renderer, INTERSECTED, playStatus = true;
 
 const totalGroup = new THREE.Group();
 
@@ -15,7 +17,13 @@ const meshArr = [];
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const video = document.getElementById("video");
+const btnVideo = document.getElementById('videoControl');
 var lastRaycasterObject = null;
+btnVideo.addEventListener('click', function (e) {
+  playStatus = !playStatus;
+  btnVideo.innerHTML = playStatus?'Pause':'Play';
+  if (playStatus) video.play(); else video.pause();
+})
 
 window.addEventListener("pointermove", onPointerMove);
 function onPointerMove(event) {
@@ -46,8 +54,6 @@ function onPointerMove(event) {
         window.innerHeight,
         camera
       );
-      console.log("callled", INTERSECTED);
-      console.log(pos2D);
 
       $("#tooltip").text(INTERSECTED.name);
       $("#tooltip").css({
@@ -75,7 +81,39 @@ function onPointerMove(event) {
     INTERSECTED = null;
   }
 
-  
+  // var pos2D = Get2DPos(
+  //   INTERSECTED,
+  //   window.innerWidth,
+  //   window.innerHeight,
+  //   camera
+  // );
+  // console.log("callled", INTERSECTED);
+  // console.log(pos2D);
+
+  // setTimeout(() => {
+  //   $("#tooltip").text(intersects.object.name);
+  //   intersects.object.material.color.setRGB(1, 0, 0);
+  //   $("#tooltip").css({
+  //     display: "block",
+  //     opacity: 0.0,
+  //   });
+  //   $("#tooltip").css({ top: pos2D.y + "px", left: pos2D.x + "px" });
+  //   $("#tooltip").css({ opacity: "1" });
+  //   $("html,body").css("cursor", "pointer");
+  // }, 10);
+
+  // $("#tooltip").css({top : pos2D.y+'px',left : pos2D.x+'px'})
+  // $("#tooltip").css({opacity : '1'})
+  // $('html,body').css('cursor','pointer');
+  // } else {
+  //   // console.log(lastRaycasterObject);
+  // if (lastRaycasterObject) {
+  //   lastRaycasterObject.material.color.setRGB(0.8, 0.8, 0.8);
+  // }
+
+  //   $("#tooltip").text("");
+  //   $("#tooltip").css("display", "none");
+  // }
 }
 
 function init() {
@@ -88,7 +126,6 @@ function init() {
   );
   camera.position.set(0, 0, 1);
 
-
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -97,7 +134,6 @@ function init() {
 
   const orbitControl = new OrbitControls(camera, renderer.domElement);
   // let controls = new THREE.OrbitControls(camera);
-  orbitControl.addEventListener("change", renderer);
   orbitControl.minDistance = 1;
   orbitControl.maxDistance = 20;
 
@@ -118,10 +154,7 @@ function init() {
   loadSkyBox();
   loadModels();
   animate();
-
 }
-
-
 
 function loadVedios() {
   const texture = new THREE.VideoTexture(video);
@@ -227,12 +260,10 @@ function loadModels() {
       // object.scale.set(0.1,0.1,0.)
       object1.scale.set(7, 10, 5);
       object1.position.set(-7, -10, -40);
-      // object1.name = "door2";
+      object1.name = "door2";
       // scene.add(object1)
       meshArr.push(object1);
       totalGroup.add(object1);
-
-      
     }
   );
 
@@ -252,11 +283,10 @@ function loadModels() {
     object3.scale.set(7, 10, 7);
     object3.position.set(7, -9, -39);
     object3.rotation.set(0, -0.08, 0);
-    // object3.name = "door";
+    object3.name = "door";
     // scene.add(object3)
     meshArr.push(object3);
     totalGroup.add(object3);
-
   });
 }
 function animate() {
@@ -268,9 +298,8 @@ function animate() {
 //two dimensional position
 function Get2DPos(obj, cWidth, cHeight, camera) {
   var vector = new THREE.Vector3();
-  var widthHalf = 0.4* cWidth;
-  var heightHalf = 0.4 * cHeight;
-
+  var widthHalf = 0.5 * cWidth;
+  var heightHalf = 0.5 * cHeight;
 
   obj.updateMatrixWorld();
   vector.setFromMatrixPosition(obj.matrixWorld);
@@ -278,6 +307,5 @@ function Get2DPos(obj, cWidth, cHeight, camera) {
   vector.x = vector.x * widthHalf + widthHalf - 100;
   vector.y = -(vector.y * heightHalf) + heightHalf - 100;
   return { x: vector.x, y: vector.y };
-
 }
 init();
